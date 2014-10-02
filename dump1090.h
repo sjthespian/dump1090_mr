@@ -143,6 +143,7 @@
 #define MODES_ACFLAGS_FS_VALID       (1<<13) // Aircraft Flight Status is known
 #define MODES_ACFLAGS_NSEWSPD_VALID  (1<<14) // Aircraft EW and NS Speed is known
 #define MODES_ACFLAGS_LATLON_REL_OK  (1<<15) // Indicates it's OK to do a relative CPR
+#define MODES_ACFLAGS_APFLAGS_VALID  (1<<16) // Indicates AP flags are valid
 
 #define MODES_ACFLAGS_LLEITHER_VALID (MODES_ACFLAGS_LLEVEN_VALID | MODES_ACFLAGS_LLODD_VALID)
 #define MODES_ACFLAGS_LLBOTH_VALID   (MODES_ACFLAGS_LLEVEN_VALID | MODES_ACFLAGS_LLODD_VALID)
@@ -412,6 +413,16 @@ struct modesMessage {
     int    ns_velocity;         // N/S velocity.
     int    vert_rate;           // Vertical rate.
     int    velocity;            // Reported by aircraft, or computed from from EW and NS velocity
+
+    unsigned int ap_sel_alt_type : 1;
+    unsigned int ap_engaged : 1;
+    unsigned int ap_vnav_engaged : 1;
+    unsigned int ap_alt_hold_engaged : 1;
+    unsigned int ap_approach_mode_engaged : 1;
+    unsigned int tcas_operational : 1;
+
+    int ap_sel_alt;
+    int ap_heading;
 
     // DF4, DF5, DF20, DF21
     int  fs;                    // Flight status for DF4,5,20,21

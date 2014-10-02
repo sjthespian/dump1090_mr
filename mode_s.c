@@ -1102,13 +1102,24 @@ void decodeModesMessage(struct modesMessage *mm, unsigned char *msg) {
             }
 
         } else if (metype == 29) { // Aircraft Trajectory Intent
+			if (mesub == 1) {      // Target state and status information
+                mm->bFlags |= MODES_ACFLAGS_APFLAGS_VALID;
+                mm->ap_sel_alt_type = msg[5] & 0x80 ? 1 : 0;
+                mm->ap_sel_alt = (((msg[5] & 0x7f) << 4) | ((msg[6] & 0xf0) >> 4)) * 32;
+                mm->ap_engaged = msg[9] & 0x01;
+                mm->ap_vnav_engaged = msg[10] & 0x80 ? 1 : 0;
+                mm->ap_alt_hold_engaged = msg[10] & 0x40 ? 1 : 0;
+                mm->ap_approach_mode_engaged = msg[10] & 0x10 ? 1 : 0;
+                mm->tcas_operational = msg[10] & 0x10 ? 1 : 0;
+
+                mm->ap_heading = round(((msg[7] & 0x1) << 7) && (msg[8] >> 1) * 0.703125);
+            }
 
         } else if (metype == 30) { // Aircraft Operational Coordination
 
         } else if (metype == 31) { // Aircraft Operational Status
 
         } else { // Other metypes
-
         }
     }
 
@@ -1326,6 +1337,16 @@ void displayModesMessage(struct modesMessage *mm) {
 				printf("    Squawk: %04x\n", mm->modeA);
             } else {
                 printf("    Unrecognized ME subtype: %d subtype: %d\n", mm->metype, mm->mesub);
+            }
+
+        } else if (mm->metype == 29) { // Aircraft State and Status information
+            if (mm->mesub == 1) {
+                if (!mm->ap_engaged) {
+                    printf("    AP not engaged.\n");
+                } else {
+                    printf("    AP engaged: VNAV %d, ALT HOLD %d, APPROACH %d, TCAS OP %d\n, mm->ap_vnav_engaged, mm->ap_alt_hold_engaged, mm->ap_approach_mode_engaged");
+                    printf("    AP sel alt %d, heading %d\n", mm->ap_sel_alt, mm->ap_heading);
+                }
             }
 
         } else if (mm->metype == 23) { // Test Message
