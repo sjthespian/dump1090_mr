@@ -793,6 +793,40 @@ char *es_str[8] = {
     /* 6 */ "Downed Aircraft",
     /* 7 */ "Reserved"
 };
+
+char *aidcat_str[30] = {
+    /* MODES_AIDCAT_NO_INFORMATION 0 */ "no_info",
+    /* MODES_AIDCAT_LIGHT 1 */ "light",
+    /* MODES_AIDCAT_SMALL 2 */ "small",
+    /* MODES_AIDCAT_LARGE 3 */ "large",
+    /* MODES_AIDCAT_LARGE_HIGH_VORTEX 4 */ "large_high_vortex",
+    /* MODES_AIDCAT_HEAVY 5 */ "heavy",
+    /* MODES_AIDCAT_HIGH_PERFORMANCE 6 */ "high_performance",
+    /* MODES_AIDCAT_ROTORCRAFT 7 */ "rotorcraft",
+    /* MODES_AIDCAT_GLIDER 8 */ "glider",
+    /* MODES_AIDCAT_LIGHTER_THAN_AIR 9 */ "lighter_than_air",
+    /* MODES_AIDCAT_SKYDIVER 10 */ "skydiver",
+    /* MODES_AIDCAT_ULTRALIGHT 11 */ "ultralight",
+    /* MODES_AIDCAT_RESERVED_B5 12 */ "reserved_b5",
+    /* MODES_AIDCAT_UAV 13 */ "uav",
+    /* MODES_AIDCAT_SURFACE_EMERGENCY_VEHICLE 14 */ "surface_emergency_vehicle",
+    /* MODES_AIDCAT_SURFACE_SERVICE_VEHICLE 15 */ "surface_service_vehicle",
+    /* MODES_AIDCAT_POINT_OBSTACLE 16 */ "point_obstacle",
+    /* MODES_AIDCAT_CLUSTER_OBSTACLE 17 */ "cluster_obstacle",
+    /* MODES_AIDCAT_LINE_OBSTACLE 18 */ "line_obstacle",
+    /* MODES_AIDCAT_RESERVED_C6 19 */ "reserved_c6",
+    /* MODES_AIDCAT_RESERVED_C7 20 */ "reserved_c7",
+    /* MODES_AIDCAT_SPACECRAFT 21 */ "spacecraft",
+    /* MODES_AIDCAT_RESERVED_D0 22 */ "reserved_d0",
+    /* MODES_AIDCAT_RESERVED_D1 23 */ "reserved_d1",
+    /* MODES_AIDCAT_RESERVED_D2 24 */ "reserved_d2",
+    /* MODES_AIDCAT_RESERVED_D3 25 */ "reserved_d3",
+    /* MODES_AIDCAT_RESERVED_D4 26 */ "reserved_d4",
+    /* MODES_AIDCAT_RESERVED_D5 27 */ "reserved_d5",
+    /* MODES_AIDCAT_RESERVED_D6 28 */ "reserved_d6",
+    /* MODES_AIDCAT_RESERVED_D7 29 */ "reserved_d7",
+};
+     
 //
 //=========================================================================
 //
@@ -825,6 +859,68 @@ char *getMEDescription(int metype, int mesub) {
         mename = "Aircraft Operational Status Message";
     return mename;
 }
+
+int aidIdAndTypeToCategory (int aid_type, int aid_cat) {
+    switch (aid_type) {
+        case 1:
+            // set D
+            switch (aid_cat) {
+                case 0: return(MODES_AIDCAT_RESERVED_D0);
+                case 1: return(MODES_AIDCAT_RESERVED_D1);
+                case 2: return(MODES_AIDCAT_RESERVED_D2);
+                case 3: return(MODES_AIDCAT_RESERVED_D3);
+                case 4: return(MODES_AIDCAT_RESERVED_D4);
+                case 5: return(MODES_AIDCAT_RESERVED_D5);
+                case 6: return(MODES_AIDCAT_RESERVED_D6);
+                case 7: return(MODES_AIDCAT_RESERVED_D7);
+            }
+            break;
+
+        case 2:
+            // set C
+            switch (aid_cat) {
+                case 0: return(MODES_AIDCAT_NO_INFORMATION);
+                case 1: return(MODES_AIDCAT_SURFACE_EMERGENCY_VEHICLE);
+                case 2: return(MODES_AIDCAT_SURFACE_SERVICE_VEHICLE);
+                case 3: return(MODES_AIDCAT_POINT_OBSTACLE);
+                case 4: return(MODES_AIDCAT_CLUSTER_OBSTACLE);
+                case 5: return(MODES_AIDCAT_LINE_OBSTACLE);
+                case 6: return(MODES_AIDCAT_RESERVED_C6);
+                case 7: return(MODES_AIDCAT_RESERVED_C7);
+            }
+            break;
+
+        case 3:
+            // set B
+            switch (aid_cat) {
+                case 0: return(MODES_AIDCAT_NO_INFORMATION);
+                case 1: return(MODES_AIDCAT_GLIDER);
+                case 2: return(MODES_AIDCAT_LIGHTER_THAN_AIR);
+                case 3: return(MODES_AIDCAT_SKYDIVER);
+                case 4: return(MODES_AIDCAT_ULTRALIGHT);
+                case 5: return(MODES_AIDCAT_RESERVED_B5);
+                case 6: return(MODES_AIDCAT_UAV);
+                case 7: return(MODES_AIDCAT_SPACECRAFT);
+            }
+            break;
+
+        case 4:
+            // set A
+            switch (aid_cat) {
+                case 0: return(MODES_AIDCAT_NO_INFORMATION);
+                case 1: return(MODES_AIDCAT_LIGHT);
+                case 2: return(MODES_AIDCAT_SMALL);
+                case 3: return(MODES_AIDCAT_LARGE);
+                case 4: return(MODES_AIDCAT_LARGE_HIGH_VORTEX);
+                case 5: return(MODES_AIDCAT_HEAVY);
+                case 6: return(MODES_AIDCAT_HIGH_PERFORMANCE);
+                case 7: return(MODES_AIDCAT_ROTORCRAFT);
+            }
+            break;
+    }
+    return(MODES_AIDCAT_NO_INFORMATION);
+}
+
 //
 //=========================================================================
 //
@@ -972,6 +1068,8 @@ void decodeModesMessage(struct modesMessage *mm, unsigned char *msg) {
             uint32_t chars;
             mm->bFlags |= MODES_ACFLAGS_CALLSIGN_VALID;
 
+            mm->aid_cat = aidIdAndTypeToCategory (metype, msg[4] & 7);
+
             chars = (msg[5] << 16) | (msg[6] << 8) | (msg[7]);
             mm->flight[3] = ais_charset[chars & 0x3F]; chars = chars >> 6;
             mm->flight[2] = ais_charset[chars & 0x3F]; chars = chars >> 6;
@@ -1091,6 +1189,7 @@ void decodeModesMessage(struct modesMessage *mm, unsigned char *msg) {
             }
 
         } else if (metype == 24) { // Reserved for Surface System Status
+	    printf("unhandled DF %d metype %d\n", mm->msgtype, metype);
 
         } else if (metype == 28) { // Extended Squitter Aircraft Status
 			if (mesub == 1) {      // Emergency status squawk field
@@ -1102,13 +1201,13 @@ void decodeModesMessage(struct modesMessage *mm, unsigned char *msg) {
             }
 
         } else if (metype == 29) { // Aircraft Trajectory Intent
-
+	    printf("unhandled DF %d metype %d\n", mm->msgtype, metype);
         } else if (metype == 30) { // Aircraft Operational Coordination
-
+	    printf("unhandled DF %d metype %d\n", mm->msgtype, metype);
         } else if (metype == 31) { // Aircraft Operational Status
-
+	    printf("unhandled DF %d metype %d\n", mm->msgtype, metype);
         } else { // Other metypes
-
+	    printf("unhandled DF %d metype %d\n", mm->msgtype, metype);
         }
     }
 
@@ -1133,9 +1232,11 @@ void decodeModesMessage(struct modesMessage *mm, unsigned char *msg) {
 
             mm->flight[8] = '\0';
         } else {
+	    printf("unrecognized DF %d subtype\n", mm->msgtype);
         }
     }
 }
+
 //
 //=========================================================================
 //
@@ -1284,6 +1385,7 @@ void displayModesMessage(struct modesMessage *mm) {
         if (mm->metype >= 1 && mm->metype <= 4) { // Aircraft identification
             printf("    Aircraft Type  : %c%d\n", ('A' + 4 - mm->metype), mm->mesub);
             printf("    Identification : %s\n", mm->flight);
+            printf("    Category       : %s\n", aidcat_str[mm->aid_cat]);
 
         } else if (mm->metype == 19) { // Airborne Velocity
             if (mm->mesub == 1 || mm->mesub == 2) {

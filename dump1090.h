@@ -179,6 +179,36 @@
 #define MODES_NET_SNDBUF_SIZE (1024*64)
 #define MODES_NET_SNDBUF_MAX  (7)
 
+#define MODES_AIDCAT_NO_INFORMATION 0
+#define MODES_AIDCAT_LIGHT 1
+#define MODES_AIDCAT_SMALL 2
+#define MODES_AIDCAT_LARGE 3
+#define MODES_AIDCAT_LARGE_HIGH_VORTEX 4
+#define MODES_AIDCAT_HEAVY 5
+#define MODES_AIDCAT_HIGH_PERFORMANCE 6
+#define MODES_AIDCAT_ROTORCRAFT 7
+#define MODES_AIDCAT_GLIDER 8
+#define MODES_AIDCAT_LIGHTER_THAN_AIR 9
+#define MODES_AIDCAT_SKYDIVER 10
+#define MODES_AIDCAT_ULTRALIGHT 11
+#define MODES_AIDCAT_RESERVED_B5 12
+#define MODES_AIDCAT_UAV 13
+#define MODES_AIDCAT_SURFACE_EMERGENCY_VEHICLE 14
+#define MODES_AIDCAT_SURFACE_SERVICE_VEHICLE 15
+#define MODES_AIDCAT_POINT_OBSTACLE 16
+#define MODES_AIDCAT_CLUSTER_OBSTACLE 17
+#define MODES_AIDCAT_LINE_OBSTACLE 18
+#define MODES_AIDCAT_RESERVED_C6 19
+#define MODES_AIDCAT_RESERVED_C7 20
+#define MODES_AIDCAT_SPACECRAFT 21
+#define MODES_AIDCAT_RESERVED_D0 22
+#define MODES_AIDCAT_RESERVED_D1 23
+#define MODES_AIDCAT_RESERVED_D2 24
+#define MODES_AIDCAT_RESERVED_D3 25
+#define MODES_AIDCAT_RESERVED_D4 26
+#define MODES_AIDCAT_RESERVED_D5 27
+#define MODES_AIDCAT_RESERVED_D6 28
+#define MODES_AIDCAT_RESERVED_D7 29
 #ifndef HTMLPATH
 #define HTMLPATH   "./public_html"      // default path for gmap.html etc
 #endif
@@ -425,6 +455,7 @@ struct modesMessage {
     int  altitude;
     int  unit; 
     int  bFlags;                // Flags related to fields in this structure
+    int  aid_cat;               // aircraft emitter category
 };
 
 // ======================== function declarations =========================
