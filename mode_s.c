@@ -1070,6 +1070,11 @@ void decodeModesMessage(struct modesMessage *mm, unsigned char *msg) {
 
             mm->aid_cat = aidIdAndTypeToCategory (metype, msg[4] & 7);
 
+            // NB temp
+            if (mm->aid_cat != 0) {
+                printf("aid_cat: %s\n", aidcat_str[mm->aid_cat]);
+            }
+
             chars = (msg[5] << 16) | (msg[6] << 8) | (msg[7]);
             mm->flight[3] = ais_charset[chars & 0x3F]; chars = chars >> 6;
             mm->flight[2] = ais_charset[chars & 0x3F]; chars = chars >> 6;
