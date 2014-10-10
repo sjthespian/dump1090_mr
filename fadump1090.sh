@@ -24,7 +24,7 @@ LOCKFILE=/var/lock/dump1090
 start() {
     log_daemon_msg "Starting dump1090 server" "dump1090"
 # --quiet
-    /sbin/start-stop-daemon --start --oknodo --background --no-close --pidfile $PIDFILE --exec $DAEMON -- $PROG_ARGS
+    /sbin/start-stop-daemon --start --oknodo --background --no-close --make-pidfile --pidfile $PIDFILE --exec $DAEMON -- $PROG_ARGS
     status=$?
     log_end_msg $status
     return
